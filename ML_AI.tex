@@ -54,13 +54,15 @@
 \pagestyle{fancy} % All pages have headers and footers
 \fancyhead{} % Blank out the default header
 \fancyfoot{} % Blank out the default footer
-\fancyhead[C]{Golang $\bullet$ Aug 2019 $\bullet$ Vol. I, No. 1} % Custom header text
+\fancyhead[C]{Golang $\bullet$ Aug 2019} % Custom header text
 \fancyfoot[RO,LE]{\thepage} % Custom footer text
 
 \usepackage{titling} % Customizing the title section
 
 \usepackage{hyperref} % For hyperlinks in the PDF
 \usepackage{graphicx}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 
 %----------------------------------------------------------------------------------------
 %	TITLE SECTION
@@ -72,14 +74,14 @@
 \posttitle{\end{center}} % Article title closing formatting
 \title{Algoritmos de Inteligencia Artificial y Machine Learning en Go} % Article title
 \author{%
-\textsc{Salvador E. Venegas-Andraca} \\[1ex] % Your name
-\normalsize Tecnológico de Monterrey, Escuela de Ingeniería y Ciencias \\ % Your institution
-\normalsize \href{mailto:salvador.venegas-andraca@keble.oxon.org}{salvador.venegas-andraca@keble.oxon.org} % Your email address
-\and % Uncomment if 2 authors are required, duplicate these 4 lines if more
 \textsc{José M. Miranda Villagrán} \\[1ex] % Second author's name
 \normalsize Instituto Tecnológigo de Veracruz \\ % Second author's institution
 \normalsize \href{mailto:mirandav@itver.edu.mx}{mirandav@itver.edu.mx} % Second author's email address
 \and % Uncomment if 2 authors are required, duplicate these 4 lines if more
+\textsc{Salvador E. Venegas-Andraca} \\[1ex] % Your name
+\normalsize Tecnológico de Monterrey, Escuela de Ingeniería y Ciencias \\ % Your institution
+\normalsize \href{mailto:salvador.venegas-andraca@keble.oxon.org}{salvador.venegas-andraca@keble.oxon.org} % Your email address
+\and % Uncomment if 2 authors are required, duplicate these 4 lines if
 \textsc{Gabriel Acosta} \\[1ex] % Second author's name
 \normalsize Instituto Politécnico Nacional \\ % Second author's institution
 \normalsize \href{mailto:algo@algo.com}{algo@algo.com} % Second author's email address
@@ -88,7 +90,7 @@
 \renewcommand{\maketitlehookd}{%
 \begin{abstract}
 \noindent 
-En este articulo se explica la etapa actual del hardware y software de la computadora y por qué necesitamos un nuevo lenguaje como Go. 
+En este articulo se explica la etapa actual en la que se encuentra desarrollada la computación y por qué necesitamos un nuevo lenguaje como Go para aprovechar los avances actuales del hardware. 
 \end{abstract}
 }
 
@@ -139,83 +141,95 @@ Por lo tanto, si no podemos confiar en las mejoras de hardware, el único camino
 \noindent
 Para evaluar el lenguaje Go como una solución para el desarrollo web moderno, hay que ver las tendencias y considerar que debería proporcionar "el lenguaje servidor del futuro".\footnote{\url{https://nathany.com/why-go/}}
 
-Los fabricantes de hardware están agregando más y más núcleos a los procesadores para aumentar el rendimiento. Todos los centros de datos funcionan con esos procesadores. Además, las aplicaciones actuales utilizan múltiples microservicios para mantener conexiones de bases de datos, colas de mensajes y mantener cachés. Por lo tanto, el software que se desarrolla y los lenguajes de programación deben admitir la concurrencia fácilmente y deben ser escalables con un mayor número de núcleos.
+Los fabricantes de hardware están agregando cada vez más núcleos a los procesadores para aumentar el rendimiento. Todos los centros de datos funcionan con esos procesadores. Además, las aplicaciones actuales utilizan múltiples microservicios para mantener conexiones de bases de datos, colas de mensajes y mantener cachés. Por lo tanto, el software que se desarrolla y los lenguajes de programación deben admitir la concurrencia fácilmente y deben ser escalables con un mayor número de núcleos.
 
-Pero, la mayoría de los lenguajes de programación modernos (como Java, Python, etc.) son del entorno de subproceso único de los años 90. La mayoría de esos lenguajes de programación admite subprocesos múltiples. Pero el verdadero problema viene con la ejecución concurrente, el bloqueo de subprocesos, las condiciones de carrera y los puntos muertos. Esas cosas hacen que sea difícil crear una aplicación de subprocesos múltiples en esos lenguajes.
+Pero, la mayoría de los lenguajes de programación modernos (como Java, Python, etc.) son del entorno single-threaded de los años 90. La mayoría de esos lenguajes de programación admite multi-threaded. Pero el verdadero problema viene con la ejecución concurrente, threading-locking, las condiciones de carrera\footnote{\url{https://searchstorage.techtarget.com/definition/race-condition}} y los deadlock. Esas cosas hacen que sea difícil crear una aplicación multi-threaded en esos lenguajes.
 
 
+Por ejemplo, crear un nuevo hilo en Java no es eficiente en la memoria. La sobrecarga real varía según las plataformas, pero la creación de hilos lleva tiempo, ya que introduce latencia en el procesamiento de solicitudes y requiere cierta actividad de procesamiento por parte de JVM y SO. Si las solicitudes son frecuentes y ligeras, como en la mayoría de las aplicaciones de servidor, la creación de un nuevo hilo para cada solicitud puede consumir importantes recursos informáticos. Además, si desea comunicarse entre dos o más hilos, es muy difícil \cite[pág 73]{Peierls:2006}.
 
 
 %------------------------------------------------
 
-\section{Methods}
+\section{Algoritmos}
 
-Maecenas sed ultricies felis. Sed imperdiet dictum arcu a egestas. 
+\subsection{Algoritmos de búsqueda en grafos}
+
+En general existen dos categorías para clasificar los distintos algoritmos para búsqueda en grafos:
 \begin{itemize}
-\item Donec dolor arcu, rutrum id molestie in, viverra sed diam
-\item Curabitur feugiat
-\item turpis sed auctor facilisis
-\item arcu eros accumsan lorem, at posuere mi diam sit amet tortor
-\item Fusce fermentum, mi sit amet euismod rutrum
-\item sem lorem molestie diam, iaculis aliquet sapien tortor non nisi
-\item Pellentesque bibendum pretium aliquet
+	\item Búsqueda sin información.
+	\item Búsqueda informada.
 \end{itemize}
-\blindtext % Dummy text
 
-Text requiring further explanation\footnote{Example footnote}.
+La \textbf{búsqueda sin información del dominio}, también llamada ciega o exhaustiva es:
+\begin{itemize}
+    \item \textbf{Sistemática:} No deja sin explorar ningún nodo y lo explora sólo una vez.
+    \item \textbf{Objetiva:} Pues no depende del dominio del problema.
+\end{itemize}
+
+\noindent
+Estas técnicas son poco eficientes, aunque, en coste promedio, son mejores que las que utilizan el conocimiento del dominio del problema. Se caracterizan, entre otras cosas, porque la aplicación de los operadores a los estados se realiza de manera sistemática, uno detrás de otro (estrategia de control no informada). Además todas ellas son búsquedas por tentativas y utilizan un esquema de producción (búsqueda en el espacio de estados).
+
+La estrategia de \textbf{búsqueda informada} (la que utiliza el
+conocimiento específico del problema más allá de la definición del problema en sí mismo)puede encontrar soluciones de una manera más eficiente que una estrategia no informada.
+
+\noindent
+Como criterio para diferenciarlas, se utilizará el orden en que se recorren los estados. Así, para el espacio de estados, tendremos:
+
+\begin{itemize}
+    \item Búsqueda en amplitud.
+    \item Búsqueda en profundidad.
+    \item Búsqueda A*.
+\end{itemize}
+
+%--------------------------------
+
+\subsubsection{Búsqueda en amplitud (BFS)}
+
+La búsqueda en amplitud es una estrategia sencilla en la que se expande primero el nodo raíz, a continuación se expanden todos los sucesores del nodo raíz, después sus sucesores, etc. En general, se expanden todos los nodos a una profundidad en el árbol de búsqueda antes de expandir cualquier nodo del próximo nivel. La forma de implementarlo es poner los sucesores de cada nodo al final de una cola. El pseudocódigo se da en la figura \ref{fig:1}.
+
+
+
 
 %------------------------------------------------
 
-\section{Results}
+%\section{Results}
 
-\begin{table}
-\caption{Example table}
-\centering
-\begin{tabular}{llr}
-\toprule
-\multicolumn{2}{c}{Name} \\
-\cmidrule(r){1-2}
-First name & Last Name & Grade \\
-\midrule
-John & Doe & $7.5$ \\
-Richard & Miles & $2$ \\
-\bottomrule
-\end{tabular}
-\end{table}
+%\begin{table}
+%\caption{Example table}
+%\centering
+%	\begin{tabular}{llr}
+%	\toprule
+%	\multicolumn{2}{c}{Name} \\
+%	\cmidrule(r){1-2}
+%	First name & Last Name & Grade \\
+%	\midrule
+%	John & Doe & $7.5$ \\
+%	Richard & Miles & $2$ \\
+%	\bottomrule
+%	\end{tabular}
+%\end{table}
 
-\blindtext % Dummy text
 
-\begin{equation}
-\label{eq:emc}
-e = mc^2
-\end{equation}
 
-\blindtext % Dummy text
-
-%------------------------------------------------
-
-\section{Discussion}
-
-\subsection{Subsection One}
-
-A statement requiring citation \cite{Figueredo:2009dg}.
-\blindtext % Dummy text
-
-\subsection{Subsection Two}
-
-\blindtext % Dummy text
+%\begin{equation}
+%\label{eq:emc}
+%e = mc^2
+%\end{equation}
 
 %----------------------------------------------------------------------------------------
 %	REFERENCE LIST
 %----------------------------------------------------------------------------------------
 
+
 \begin{thebibliography}{99} % Bibliography - this is intentionally simple in this template
 
-\bibitem[Figueredo and Wolf, 2009]{Figueredo:2009dg}
-Figueredo, A.~J. and Wolf, P. S.~A. (2009).
-\newblock Assortative pairing and life history strategy - a cross-cultural
-  study.
-\newblock {\em Human Nature}, 20:317--330.
+\bibitem[Peierls, 2006]{Peierls:2006}
+Peierls, T., Goetz, B., Bloch, J., Bowbeer, J., Lea, D. and Holmes, D. (2006).
+\newblock \textit{Task Execution.} 
+En Java Concurrency in Practice(424)
+\newblock {Universidad de Michigan: Pearson Education.}
+%Peierls, T., Goetz, B., Bloch, J., Bowbeer, J., Lea, D. & Holmes, D.. (2006). Task Execution. En Java Concurrency in Practice(73). Universidad de Michigan: Pearson Education.
  
 \end{thebibliography}
 
